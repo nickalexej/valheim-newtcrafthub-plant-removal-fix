@@ -26,6 +26,15 @@ def run(github=None, *, dry_run=False, fetch=fetch_upstream, config=None):
     config = config or compatibility()
     if config["status"] != "active" or os.environ.get("MAINTENANCE_ENABLED", "true").lower() != "true":
         return {"status": "paused", "changed": False}
+    if not dry_run:
+        # Host health must still be reported when Thunderstore is unavailable.
+        if heartbeat_stale(os.environ.get("MAC_LAST_RUN_AT", "")):
+            github.upsert_issue("macmini-stale", "MacMini-Wartung: Lebenszeichen fehlt",
+                                "Seit mehr als 36 Stunden liegt kein gültiges Lebenszeichen vor. "
+                                "MacMini, App, Netzwerk, GitHub-Zugang und Codex-Limits prüfen.",
+                                ["maintenance", "automation-failure"])
+        else:
+            github.resolve_system_issue("macmini-stale")
     try:
         snapshot, _, _ = fetch()
     except Exception as error:
@@ -46,13 +55,6 @@ def run(github=None, *, dry_run=False, fetch=fetch_upstream, config=None):
                                 "Die Versionsfreigabe darf erst nach Codeprüfung und erfolgreichen Tests erweitert werden.",
                                 ["maintenance", "upstream-update"])
         github.resolve_system_issue("monitor-error")
-        if heartbeat_stale(os.environ.get("MAC_LAST_RUN_AT", "")):
-            github.upsert_issue("macmini-stale", "MacMini-Wartung: Lebenszeichen fehlt",
-                                "Seit mehr als 36 Stunden liegt kein gültiges Lebenszeichen vor. "
-                                "MacMini, App, Netzwerk, GitHub-Zugang und Codex-Limits prüfen.",
-                                ["maintenance", "automation-failure"])
-        else:
-            github.resolve_system_issue("macmini-stale")
     return {"status": "ok", "changed": changed, "upstream": snapshot}
 
 

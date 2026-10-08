@@ -50,7 +50,7 @@ Use the .NET SDK **10**, **PowerShell 7**, **Python 3.11 or newer**, and game as
 
 See [README.md](README.md#quellcode-bauen) for direct `dotnet` commands. The script always runs maintenance tests, static API verification and package checks. Output is written to `dist/0.1.1/`: the addon DLL, installation ZIP, `SHA256SUMS.txt`, and `BUILD-VERIFICATION.json`. A publishable proof must identify a committed, clean checkout.
 
-The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **85 API references**, validated game methods and checked Harmony state pairing. **27 maintenance tests** passed. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. Version 0.1.1 keeps the original removal logic and adds compatibility declarations generated from the central file. No new gameplay test was performed for 0.1.1. Debug-file generation remains disabled.
+The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **85 API references**, validated game methods and checked Harmony state pairing. **28 maintenance tests** passed. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. Version 0.1.1 keeps the original removal logic and adds compatibility declarations generated from the central file. No new gameplay test was performed for 0.1.1. Debug-file generation remains disabled.
 
 Multiplayer, in-game refunds, every other plant prefab, controller input and all other mod combinations have not been independently tested. Static verification does not run the game.
 

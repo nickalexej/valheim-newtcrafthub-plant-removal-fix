@@ -139,7 +139,7 @@ Einrichtung, erlaubte automatische Aktionen, Zugangsbeschränkungen, Ausfallübe
 - Release-Build gegen die vorhandenen Valheim-1.0.17-Bibliotheken: **0 Fehler, 0 Warnungen**.
 - **85 API-Verweise** der DLL statisch aufgelöst.
 - Spielmethoden, Abbauprüfungen und Harmony-Zustandszuordnung geprüft.
-- **27 Wartungs-Tests** für Monitor, Ausfälle, Issue-Aufnahme, Merge-Schutz und Release-Prüfung bestanden.
+- **28 Wartungs-Tests** für Monitor, Ausfälle, Issue-Aufnahme, Merge-Schutz und Release-Prüfung bestanden.
 - Der Benutzer hat erfolgreiches Entfernen eines gepflanzten Pilzes mit dem ursprünglichen Fix auf seinem Gaming-PC bestätigt. Die genaue Valheim-Version dieses Tests wurde nicht festgehalten.
 - Version 0.1.1 übernimmt die Abbaulogik des ursprünglichen Fixes und ergänzt die aus der Kompatibilitätsdatei erzeugte Versionsfreigabe. Ein neuer Spieltest für 0.1.1 wurde nicht durchgeführt. Die Build-Konfiguration lässt Debugdateien und lokale Debugpfade weg.
 

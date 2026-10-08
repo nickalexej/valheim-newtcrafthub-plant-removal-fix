@@ -173,6 +173,12 @@ class MonitorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             fetch_upstream(lambda url: metadata)
 
+    def test_upstream_failure_still_reports_host_outage(self):
+        with patch.dict(os.environ, {"MAC_LAST_RUN_AT": ""}), self.assertRaises(TimeoutError):
+            run(self.github, config=self.config, fetch=lambda: (_ for _ in ()).throw(TimeoutError()))
+        self.assertIn("macmini-stale", self.github.issues)
+        self.assertIn("monitor-error", self.github.issues)
+
     def test_invalid_archive_path_rejected(self):
         meta, data = upstream_fixture()
         stream = io.BytesIO(data)

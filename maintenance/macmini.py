@@ -10,6 +10,7 @@ from pathlib import Path
 
 from maintenance.common import ROOT, GitHub, REPOSITORY, SYSTEM_AUTHORS, compatibility, require
 from maintenance.github_auth import github_token
+from maintenance.release_policy import decision, enforce
 from maintenance.package import expected_assets, verify_assets
 from maintenance.release import release_exists, release_notes, revision, validate_release
 
@@ -32,7 +33,13 @@ def merge_pr(github, number):
             "Infrastructure/test/auth changes need owner review")
     head = pr["head"]["sha"]
     require(revision("HEAD") == head, "Checkout must match PR head")
-    verify_assets(ROOT / "dist" / compatibility()["fix_version"], expected_commit=head, require_clean=True)
+    require(not subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip(),
+            "Merge requires a clean checkout")
+    policy = decision(github, head)
+    needs_release = enforce(policy)
+    require(not policy["owner_review_required"], "Build configuration/reference changes need owner review")
+    if needs_release:
+        verify_assets(ROOT / "dist" / compatibility()["fix_version"], expected_commit=head, require_clean=True)
     checks = github.api(f"/commits/{head}/check-runs?per_page=100")["check_runs"]
     ci = [row for row in checks if row["name"] == "tests" and row["app"]["slug"] == "github-actions"]
     require(ci and ci[0]["status"] == "completed" and ci[0]["conclusion"] == "success", "GitHub CI must pass for this SHA")
@@ -47,11 +54,17 @@ def prepare_release(github, dry_run=False):
     tag = "v" + config["fix_version"]
     commit = revision("HEAD")
     require(github.api("/git/ref/heads/main")["object"]["sha"] == commit, "Only current merged main can prepare a release")
-    assets_dir = ROOT / "dist" / config["fix_version"]
-    verify_assets(assets_dir, expected_commit=commit, require_clean=True)
     existing = release_exists(github, tag)
+    require(not subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip(),
+            "Release preparation requires a clean checkout")
+    policy = decision(github, commit)
+    needs_release = enforce(policy)
     if existing and not existing["draft"]:
         return {"status": "already-published", "url": existing["html_url"]}
+    if not needs_release:
+        return {"status": "no-release", "decision": policy}
+    assets_dir = ROOT / "dist" / config["fix_version"]
+    verify_assets(assets_dir, expected_commit=commit, require_clean=True)
     if dry_run:
         return {"status": "ready", "tag": tag, "commit": commit}
     env = dict(os.environ, GH_TOKEN=github_token())

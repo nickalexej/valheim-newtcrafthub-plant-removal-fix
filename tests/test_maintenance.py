@@ -280,6 +280,7 @@ class ReleaseTests(unittest.TestCase):
         def read(args, **kwargs):
             return (self.root / args[2].split(":", 1)[1]).read_bytes()
         with patch("maintenance.release.revision", return_value=COMMIT), \
+             patch("maintenance.release.decision", return_value={"release_required": True, "version_valid": True}), \
              patch("maintenance.release.subprocess.run"), \
              patch("maintenance.release.subprocess.check_output", side_effect=read):
             return publish(github, "v" + self.config["fix_version"], dry_run)
@@ -331,22 +332,70 @@ class MergeGateTests(unittest.TestCase):
             return {"merged": True}
         return {"check_runs": [self.check]} if "check-runs" in path else self.pr
 
-    def attempt(self, checkout=COMMIT):
+    def attempt(self, checkout=COMMIT, needs_release=True, owner_review=False):
         class Client:
             pass
         github = Client()
         github.api = self.api
         github.list_all = lambda path: self.files
         with patch("maintenance.macmini.revision", return_value=checkout), \
+             patch("maintenance.macmini.subprocess.check_output", return_value=""), \
+             patch("maintenance.macmini.decision", return_value={"release_required": needs_release,
+                   "version_valid": True, "owner_review_required": owner_review}), \
              patch("maintenance.macmini.verify_assets") as verify:
             result = merge_pr(github, 1)
-            verify.assert_called_once_with(ROOT / "dist" / compatibility()["fix_version"],
-                                           expected_commit=COMMIT, require_clean=True)
+            if needs_release:
+                verify.assert_called_once_with(ROOT / "dist" / compatibility()["fix_version"],
+                                               expected_commit=COMMIT, require_clean=True)
+            else:
+                verify.assert_not_called()
             return result
 
     def test_verified_own_pr_merges_exact_commit(self):
         self.assertTrue(self.attempt()["merged"])
         self.assertEqual(self.writes[0]["sha"], COMMIT)
+
+    def test_documentation_merges_without_package(self):
+        self.files = [{"filename": "README.md"}]
+        self.assertTrue(self.attempt(needs_release=False)["merged"])
+
+    def test_documentation_still_requires_ci(self):
+        self.files = [{"filename": "README.md"}]
+        self.check["conclusion"] = "failure"
+        with self.assertRaises(ValueError):
+            self.attempt(needs_release=False)
+        self.assertFalse(self.writes)
+
+    def test_reference_changes_need_owner_review(self):
+        self.files = [{"filename": "maintenance/compatibility.json"}]
+        with self.assertRaisesRegex(ValueError, "owner review"):
+            self.attempt(owner_review=True)
+        self.assertFalse(self.writes)
+
+    def test_missing_release_package_never_merges(self):
+        github = FakeGitHub()
+        github.api = self.api
+        github.list_all = lambda path: self.files
+        with patch("maintenance.macmini.revision", return_value=COMMIT), \
+             patch("maintenance.macmini.subprocess.check_output", return_value=""), \
+             patch("maintenance.macmini.decision", return_value={"release_required": True,
+                   "version_valid": True, "owner_review_required": False}), \
+             patch("maintenance.macmini.verify_assets", side_effect=ValueError("Missing package")):
+            with self.assertRaisesRegex(ValueError, "Missing package"):
+                merge_pr(github, 1)
+        self.assertFalse(self.writes)
+
+    def test_dirty_checkout_never_merges_even_for_documentation(self):
+        github = FakeGitHub()
+        github.api = self.api
+        github.list_all = lambda path: [{"filename": "README.md"}]
+        with patch("maintenance.macmini.revision", return_value=COMMIT), \
+             patch("maintenance.macmini.subprocess.check_output", return_value=" M README.md"), \
+             patch("maintenance.macmini.decision") as policy:
+            with self.assertRaisesRegex(ValueError, "clean checkout"):
+                merge_pr(github, 1)
+            policy.assert_not_called()
+        self.assertFalse(self.writes)
 
     def test_foreign_repository_never_merges(self):
         self.pr["head"]["repo"]["full_name"] = "attacker/fork"

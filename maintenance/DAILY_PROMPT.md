@@ -28,14 +28,22 @@ wiederholte Läufe keinen zweiten Vorgang erzeugen. Technische Supportantworten
 und das Schließen fremder Issues bleiben beim Repository-Eigentümer. Die festen
 Nachfragen nach fehlenden Daten übernimmt der GitHub-Workflow.
 
-Wenn eine Anpassung erforderlich ist, arbeite in einem eigenen maintenance/-Branch,
-erhöhe die Patch-Version, dokumentiere die Codebelege und Referenzprüfsummen in
-maintenance/compatibility.json und erzeuge die Plugin-/Paketangaben. Aktualisiere
-README, README.en.md und CHANGELOG. Verwende Gitmoji-Commits ohne Co-Author-Zeilen
+Wenn eine Anpassung erforderlich ist, arbeite in einem eigenen maintenance/-Branch.
+Dokumentiere passende Codebelege und Referenzprüfsummen in maintenance/compatibility.json
+und erzeuge die Plugin-/Paketangaben. Führe vor Versionssprung und Paketbau
+python3 -m maintenance.release_policy aus. Nur release_required=true rechtfertigt eine
+höhere Plugin-Version; anschließend erneut generieren. Reine Dokumentations-, Test-,
+Workflow- und Wartungsänderungen behalten die Version und benötigen keinen DLL-Build
+oder Release. Neue freigegebene NewtCraftHub-Versionen zählen als Plugin-Änderung.
+Fehlende oder widersprüchliche Release-Basen stoppen den Veröffentlichungsablauf.
+Build-Konfiguration, Abhängigkeiten und private Referenzbasis bleiben gesondert prüfpflichtig.
+Aktualisiere README, README.en.md und CHANGELOG passend zur Änderung. Verwende Gitmoji-Commits ohne Co-Author-Zeilen
 oder KI-Vermerke in Commit-Texten. Der KI-Hinweis am Ende der README bleibt erhalten.
 Commit, Push und ein eigener PR sind freigegeben.
 
-Baue den sauberen aktuellen PR-Commit mit scripts/package.ps1 gegen die privaten
+Führe Wartungstests und maintenance.generate --check aus. Prüfe den sauberen PR-Commit
+mit python3 -m maintenance.release_policy --ref HEAD --enforce. Nur bei erforderlichem
+Plugin-Release baue diesen Commit mit scripts/package.ps1 gegen die privaten
 Referenzen in /Users/nickalexej/.local/share/newtcrafthub-maintenance/valheim/1.0.17/Managed.
 Nutze für andere Spielreferenzen zuerst eine überprüfte, dokumentierte Referenzbasis.
 Bewahre Harmony-Zustandsübergabe, Wiederherstellung von Maske und Werkzeugfreigabe
@@ -45,13 +53,16 @@ GitHub-Prüfungen für genau diesen Commit. Führe den erlaubten Merge ausschlie
 unterbrochenen Lauf und wiederhole fehlende Schritte, ohne öffentliche Dateien
 oder Tags zu überschreiben.
 
-Nach dem Merge baue den sauberen aktuellen main-Commit erneut und führe
+Nach dem Merge prüfe die Release-Entscheidung erneut. Nur bei erforderlichem
+Plugin-Release baue den sauberen aktuellen main-Commit erneut und führe
 maintenance.macmini prepare-release aus. Das erstellt Tag und Release-Entwurf
 mit eigener DLL, ZIP, SHA256SUMS.txt und BUILD-VERIFICATION.json und startet den
 GitHub-Publisher. Prüfe danach Workflow-Ergebnis, öffentliches Release und Assets.
 Spielbibliotheken und die originale NewtCraftHub-DLL bleiben privat. Ein manueller
 Spieltest ist keine Freigabevoraussetzung; behaupte keinen nicht durchgeführten
-Spieltest. Unveränderte Paketstände ohne relevanten Fehler erzeugen kein Release.
+Spieltest. Unveränderte Plugin-/Build-Eingaben erzeugen weder Versionssprung noch
+Paketbau oder Release. Bereits veröffentlichte Versionen werden nicht erneut gebaut;
+bewusst angeforderte lokale Prüfbuilds bleiben möglich.
 
 Wenn Codevergleich und passende Prüfungen einen integrierten Upstream-Fix belegen,
 dokumentiere Version und Entfernungsempfehlung, setze status=upstream-fixed mit

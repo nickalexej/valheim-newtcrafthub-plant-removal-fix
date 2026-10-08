@@ -1,8 +1,9 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System.Text.Json;
 
-if (args.Length != 3)
-    throw new ArgumentException("Aufruf: ApiVerification <Fix.dll> <Valheim-Managed> <NuGet-Pakete>");
+if (args.Length < 3 || args.Length > 4)
+    throw new ArgumentException("Aufruf: ApiVerification <Fix.dll> <Valheim-Managed> <NuGet-Pakete> [report.json]");
 var resolver = new DefaultAssemblyResolver();
 resolver.AddSearchDirectory(args[1]);
 resolver.AddSearchDirectory(Path.Combine(args[2], "bepinex.baselib/5.4.20/lib/net35"));
@@ -69,6 +70,30 @@ Require(Calls(prefix).All(call => !call.EndsWith("::Destroy") && !call.EndsWith(
 Require(finalizer.Body.Instructions.Any(i => i.OpCode == OpCodes.Stind_I4), "Finalizer stellt Zielmaske wieder her");
 Require(finalizer.Body.Instructions.Any(i => i.Operand is FieldReference f &&
     i.OpCode == OpCodes.Stfld && f.Name == "m_canRemovePieces"), "Finalizer stellt Werkzeug-Freigabe wieder her");
+var target = fix.MainModule.Types.Single(t => t.Name == "PlantTarget");
+Require(Calls(target.Methods.Single(m => m.Name == "Raycast")).Contains("Piece::IsPlacedByPlayer"),
+    "Zielpruefung beschraenkt sich auf gepflanzte Pflanzen");
+var tool = target.Methods.Single(m => m.Name == "TryTool");
+Require(tool.Body.Instructions.Any(i => i.Operand is FieldReference f && f.Name == "m_localPlayer"),
+    "Werkzeugpruefung beschraenkt sich auf lokalen Spieler");
+var plugin = fix.MainModule.Types.Single(t => t.Name == "Plugin");
+Require(fix.MainModule.GetMemberReferences().All(m =>
+    !m.DeclaringType.FullName.StartsWith("System.IO.") &&
+    !m.DeclaringType.FullName.StartsWith("System.Net.") &&
+    !m.DeclaringType.FullName.StartsWith("System.Diagnostics.Process") &&
+    !m.DeclaringType.FullName.StartsWith("System.Reflection.Emit.")),
+    "Fix fuehrt keine Datei-, Netzwerk-, Prozess- oder dynamischen Codeoperationen ein");
+Require(fix.MainModule.Types.SelectMany(t => t.Methods).All(m => !m.IsPInvokeImpl),
+    "Fix enthaelt keine nativen Imports");
+var pluginAttribute = plugin.CustomAttributes.Single(a => a.AttributeType.FullName == "BepInEx.BepInPlugin");
+var dependency = plugin.CustomAttributes.Single(a => a.AttributeType.FullName == "BepInEx.BepInDependency");
+if (args.Length == 4) {
+    File.WriteAllText(args[3], JsonSerializer.Serialize(new {
+        passed = true, checked_references = checkedReferences,
+        plugin_version = (string)pluginAttribute.ConstructorArguments[2].Value,
+        minimum_dependency = (string)dependency.ConstructorArguments[1].Value
+    }));
+}
 
 Console.WriteLine($"PASS: {checkedReferences} API-Verweise aufgeloest; Spielmethoden, Original-Abbaupruefungen und Harmony-Zustandszuordnung geprueft.");
 Console.WriteLine("Dies ist eine statische Pruefung. Valheim und Unity wurden nicht gestartet.");

@@ -8,3 +8,7 @@ dist/
 *.suo
 *.dll
 *.pdb
+.cache/
+**/__pycache__/
+*.pyc
+.runtime/

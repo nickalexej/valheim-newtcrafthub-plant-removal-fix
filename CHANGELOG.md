@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1 – 2026-10-08
+
+- Tägliche Thunderstore-Prüfung, Paketprüfsummen und deduplizierte Wartungs-Issues.
+- Zentrale Kompatibilitätsverwaltung; weiterhin ausschließlich NewtCraftHub **1.7.0** freigegeben.
+- MacMini-Build mit privaten Referenzen und überprüfbarer Commit-Zuordnung.
+- Automatische Veröffentlichung aus geprüftem Release-Entwurf; DLL, ZIP, SHA256 und Build-Bericht.
+- Fehlerformular, automatische Datennachfragen, CI und Wartungsrichtlinien.
+- Schutzgebiets-, Netzwerk- und Abbaulogik des ursprünglichen Fixes beibehalten.
+- Für diese Version kein zusätzlicher Funktionstest in Valheim ausgeführt.
+
 ## 0.1.0 – 2026-10-08
 
 - Community-Addon zum Entfernen gepflanzter Pilze und Sammelpflanzen mit Hammer oder Kultivator.

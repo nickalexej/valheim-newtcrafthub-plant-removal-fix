@@ -1,0 +1,65 @@
+name: Fehler beim Pflanzenabbau
+description: Angaben für die Prüfung des NewtCraftHub-Abbau-Fixes
+title: '[Bug] '
+labels: [triage]
+body:
+  - type: markdown
+    attributes:
+      value: 'Bitte die Spielversion und beide Mod-Versionen getrennt angeben. Dieses Addon benötigt NewtCraftHub.'
+  - type: input
+    id: valheim
+    attributes:
+      label: Valheim-Version
+      description: Versionsnummer aus dem Valheim-Hauptmenü, nicht die Mod-Version.
+    validations:
+      required: true
+  - type: input
+    id: newt
+    attributes:
+      label: NewtCraftHub-Version
+      placeholder: '1.7.0'
+    validations:
+      required: true
+  - type: input
+    id: fix
+    attributes:
+      label: Fix-Version
+      placeholder: '0.1.1'
+    validations:
+      required: true
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Werkzeug
+      options: [Hammer, Kultivator, Beide]
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Spielmodus
+      options: [Solo, Server, Beides]
+    validations:
+      required: true
+  - type: textarea
+    id: mods
+    attributes:
+      label: Weitere Mods
+      description: Relevante weitere Mods; falls keine vorhanden sind, bitte „Keine“ eintragen.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Fehler und Reproduktion
+      description: Was passiert, was wird erwartet? Ist PlantPickables aktiv? Welche Pflanze wurde von wem gepflanzt?
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log-Auszug
+      description: Relevante NewtCraftHub/PlantRemovalFix-Zeilen aus BepInEx/LogOutput.log.
+      render: text
+    validations:
+      required: true

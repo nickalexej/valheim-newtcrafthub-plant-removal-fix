@@ -1,0 +1,23 @@
+name: Issue intake
+on:
+  issues:
+    types: [opened, edited, reopened]
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  triage:
+    if: github.repository == 'nickalexej/valheim-newtcrafthub-plant-removal-fix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+          persist-credentials: false
+      - run: python3 -m maintenance.issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

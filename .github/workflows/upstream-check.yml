@@ -1,0 +1,27 @@
+name: Daily upstream check
+on:
+  schedule:
+    - cron: '17 9 * * *'
+      timezone: Europe/Berlin
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: upstream-monitor
+  cancel-in-progress: false
+jobs:
+  monitor:
+    if: github.repository == 'nickalexej/valheim-newtcrafthub-plant-removal-fix'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+          persist-credentials: false
+      - run: python3 -m maintenance.monitor
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MAC_LAST_RUN_AT: ${{ vars.MAC_LAST_RUN_AT }}
+          MAINTENANCE_ENABLED: ${{ vars.MAINTENANCE_ENABLED || 'true' }}

@@ -9,6 +9,7 @@ from pathlib import Path
 
 from maintenance.common import ROOT, GitHub, REPOSITORY, VERSION, compatibility, require
 from maintenance.package import expected_assets, verify_assets
+from maintenance.release_policy import decision, enforce
 
 
 def revision(ref):
@@ -62,6 +63,8 @@ def publish(github, tag, dry_run=False):
     require(release is not None, "Draft release missing")
     if not release["draft"]:
         return {"status": "already-published", "url": release["html_url"]}
+    policy = decision(github, commit)
+    require(enforce(policy), "Release has no plugin changes")
     with tempfile.TemporaryDirectory(prefix="newt-release-") as temporary:
         # Execute only trusted main publisher code; tagged source is read as data.
         source = Path(temporary) / "source"

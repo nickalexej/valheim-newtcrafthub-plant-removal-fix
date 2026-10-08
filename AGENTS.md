@@ -25,8 +25,15 @@ Der KI-Hinweis bleibt am Ende der README erhalten.
   Ressourcenprüfungen bleiben erhalten. Keine eigenen Lösch- oder Drop-Methoden.
 - Neue NewtCraftHub-Versionen erst nach Untersuchung des tatsächlichen Pflanz-/Abbaucodes
   freigeben. Kein bloßes Hochsetzen von Versionsnummern und kein Abschwächen der Tests.
-- GitHub-CI und privater Release-Build müssen für denselben PR-Commit erfolgreich sein.
-  Nach dem Merge auf main erneut bauen: der Release-Prüfbericht muss den Merge-Commit nennen.
+- Vor Versionssprung und Paketbau entscheidet maintenance.release_policy anhand der
+  tatsächlichen Plugin-/Build-Eingaben gegenüber dem letzten stabilen Release.
+  Reine Dokumentations-, Test- und Wartungsänderungen benötigen weder Versionssprung
+  noch DLL-Build oder Release; CI und passende Tests bleiben erforderlich.
+- Für echte Plugin-/Kompatibilitätsänderungen müssen GitHub-CI und privater Release-Build
+  für denselben PR-Commit erfolgreich sein. Nach dem Merge auf main erneut bauen:
+  der Release-Prüfbericht muss den Merge-Commit nennen.
+- Änderungen an Build-Konfiguration, Abhängigkeiten oder privater Referenzbasis
+  benötigen gesonderte Prüfung durch den Eigentümer; kein automatischer Merge.
 - Öffentliche Issue-Antworten sind auf feste Nachfragen nach fehlenden Daten begrenzt.
   Technische Supportantworten und das Schließen fremder Issues übernimmt der Benutzer.
 - Keine Änderungen oder Installationen auf dem Gaming-PC; keine Kontakte zum Upstream-Autor.

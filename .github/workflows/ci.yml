@@ -16,6 +16,11 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
+          fetch-depth: 0
       - run: python3 -m maintenance.generate --check
       - run: python3 -m unittest discover -s tests -v
+      - name: Check plugin release decision
+        run: python3 -m maintenance.release_policy --ref HEAD --enforce
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: git diff --exit-code

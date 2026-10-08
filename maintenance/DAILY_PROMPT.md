@@ -16,6 +16,8 @@ Git-Transport, Variablen, Workflow-Starts und Release-Dateien verwenden die frei
 gh-Anmeldung über maintenance.github_auth. Die gh-Anmeldung kann weitere Kontorechte
 haben; alle Wartungsaktionen bleiben auf dieses Repository begrenzt. Gib keine Tokens
 oder anderen Zugangsdaten aus und lies keine Zugangsdaten anderer Projekte.
+Fehlen dem Connector Funktionen oder Schreibrechte, nutze für dieselbe erlaubte
+Aktion gh und prüfe vor einem erneuten Erstellversuch auf bereits vorhandene PRs.
 Connector-Merges dürfen maintenance.macmini merge-pr nicht umgehen.
 
 Prüfe die offizielle Thunderstore-API und das Paket mit maintenance.upstream.

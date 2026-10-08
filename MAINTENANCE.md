@@ -32,6 +32,9 @@ Keine privaten Spiel-, Unity-, BepInEx- oder Upstream-DLLs werden hochgeladen.
   Die gh-Kontorechte selbst sind breiter als dieser Wartungsauftrag.
 - In GitHub Actions wird ausschließlich der workfloweigene GITHUB_TOKEN des erwarteten
   Repositorys verwendet; eine interaktive gh-Anmeldung auf dem Runner ist nicht nötig.
+- Falls dem Connector eine benötigte Funktion oder ein Schreibrecht fehlt, dieselbe
+  erlaubte Repository-/PR-Aktion über gh ausführen. Dabei bestehende PRs vor einem
+  erneuten Erstellversuch prüfen; Freigaben und Merge-Prüfungen bleiben unverändert.
 - Der Connector ersetzt die Authentifizierung lokaler Python-Prozesse nicht. Merges
   erfolgen weiterhin ausschließlich über maintenance.macmini merge-pr; ein direktes
   Connector-Merge darf diese Prüfungen nicht umgehen.

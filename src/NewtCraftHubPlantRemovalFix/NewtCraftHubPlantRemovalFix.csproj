@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>NewtCraftHubPlantRemovalFix</AssemblyName>
+    <RootNamespace>NewtCraftHubPlantRemovalFix</RootNamespace>
+    <Version>0.1.0</Version>
+    <Deterministic>true</Deterministic>
+    <DebugType>none</DebugType>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" PrivateAssets="all" />
+    <PackageReference Include="HarmonyX" Version="2.10.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="assembly_valheim">
+      <HintPath>$(ValheimManaged)/assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>$(ValheimManaged)/assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ValheimManaged)/UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ValheimManaged)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ValheimManaged)/UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <Target Name="RequireGameReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(ValheimManaged)/assembly_valheim.dll')" Text="ValheimManaged muss auf den Managed-Ordner deiner Valheim-Installation zeigen." />
+  </Target>
+</Project>

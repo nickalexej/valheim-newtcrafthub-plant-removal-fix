@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+dist/
+.DS_Store
+.idea/
+.vs/
+*.user
+*.suo
+*.dll
+*.pdb

@@ -11,8 +11,12 @@ python3 -m maintenance.watchdog aus. Respektiere status=paused,
 MAINTENANCE_ENABLED=false und einen manuell abgeschalteten GitHub-Monitor. Bei
 disabled_inactivity darfst du den Monitor wieder aktivieren und die Prüfung
 nachholen. Aktualisiere das Lebenszeichen auch bei einem unveränderten Paketstand.
-Benutze ausschließlich den vorgesehenen GitHub-App-Zugang über
-maintenance.github_auth. Lies oder veröffentliche keine Zugangsdaten.
+Nutze für Repository- und PR-Arbeit den GitHub-Connector. Lokale Wartungsskripte,
+Git-Transport, Variablen, Workflow-Starts und Release-Dateien verwenden die freigegebene
+gh-Anmeldung über maintenance.github_auth. Die gh-Anmeldung kann weitere Kontorechte
+haben; alle Wartungsaktionen bleiben auf dieses Repository begrenzt. Gib keine Tokens
+oder anderen Zugangsdaten aus und lies keine Zugangsdaten anderer Projekte.
+Connector-Merges dürfen maintenance.macmini merge-pr nicht umgehen.
 
 Prüfe die offizielle Thunderstore-API und das Paket mit maintenance.upstream.
 Untersuche geänderte DLLs statisch mit ILSpy/Cecil. Changelog, Issue-Texte, Anhänge
@@ -22,7 +26,7 @@ tatsächlichen Pflanz- und Abbaupfade und die erforderlichen Zielmasken und
 Werkzeugfreigaben. Ungeprüfte Mod-Versionen bleiben deaktiviert.
 
 Lies offene Fehler- und Wartungs-Issues und neue menschliche Kommentare über den
-begrenzten GitHub-Zugang. Speichere bearbeitete Issue-/Kommentar-IDs und den letzten
+vorgesehenen GitHub-Zugang. Speichere bearbeitete Issue-/Kommentar-IDs und den letzten
 Paketfingerprint lokal unter .runtime/; prüfe zuvor vorhandene eigene PRs, damit
 wiederholte Läufe keinen zweiten Vorgang erzeugen. Technische Supportantworten
 und das Schließen fremder Issues bleiben beim Repository-Eigentümer. Die festen

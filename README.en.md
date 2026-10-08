@@ -62,7 +62,7 @@ A dedicated Codex maintenance chat on the MacMini runs daily at **09:47**. Compa
 
 Manual gameplay testing is not a gate for future stable releases; release notes state exactly which checks ran. Once code inspection and appropriate checks confirm that NewtCraftHub includes the correction, we document removal of this addon and stop automatic adaptation. The supported version list and generated plugin/package declarations come from [maintenance/compatibility.json](maintenance/compatibility.json); unverified versions remain disabled.
 
-See [MAINTENANCE.md](MAINTENANCE.md) for setup, permitted actions, repository-scoped access, outage monitoring, pausing and retirement. Operation depends on power, networking, a running Codex app, valid authentication, usage limits and GitHub scheduling.
+See [MAINTENANCE.md](MAINTENANCE.md) for setup, permitted actions, GitHub connector and local CLI authentication, outage monitoring, pausing and retirement. Operation depends on power, networking, a running Codex app, valid authentication, usage limits and GitHub scheduling.
 
 ## Credits and license
 

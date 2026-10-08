@@ -3,13 +3,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 import tempfile
 from pathlib import Path
 
 from maintenance.common import ROOT, GitHub, REPOSITORY, SYSTEM_AUTHORS, compatibility, require
-from maintenance.github_auth import github_token
+from maintenance.github_auth import command_environment, git_command
 from maintenance.release_policy import decision, enforce
 from maintenance.package import expected_assets, verify_assets
 from maintenance.release import release_exists, release_notes, revision, validate_release
@@ -67,13 +66,13 @@ def prepare_release(github, dry_run=False):
     verify_assets(assets_dir, expected_commit=commit, require_clean=True)
     if dry_run:
         return {"status": "ready", "tag": tag, "commit": commit}
-    env = dict(os.environ, GH_TOKEN=github_token())
+    env = command_environment()
     ref = subprocess.run(["git", "rev-parse", "--verify", tag + "^{commit}"], cwd=ROOT, capture_output=True, text=True)
     if ref.returncode == 0:
         require(ref.stdout.strip() == commit, "Existing tag points elsewhere")
     else:
         subprocess.run(["git", "tag", "-a", tag, "-m", "🔖 " + tag, commit], cwd=ROOT, check=True)
-    subprocess.run(["git", "-c", "credential.helper=!gh auth git-credential", "push", "origin", "refs/tags/" + tag],
+    subprocess.run(git_command(["push", "origin", "refs/tags/" + tag]),
                    cwd=ROOT, env=env, check=True)
     if existing is None:
         notes = assets_dir / "release-notes.tmp"

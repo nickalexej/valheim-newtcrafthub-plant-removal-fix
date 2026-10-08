@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace NewtCraftHubPlantRemovalFix
 {
-    [BepInPlugin(PluginGuid, "NewtCraftHub Plant Removal Fix", "0.1.0")]
-    [BepInDependency(NewtGuid, "1.7.0")]
+    [BepInPlugin(PluginGuid, "NewtCraftHub Plant Removal Fix", Compatibility.FixVersion)]
+    [BepInDependency(NewtGuid, Compatibility.MinimumNewtVersion)]
     [BepInProcess("valheim.exe")]
     [BepInProcess("valheim")]
     public sealed class Plugin : BaseUnityPlugin
@@ -37,9 +37,10 @@ namespace NewtCraftHubPlantRemovalFix
             LogGameVersion();
 
             if (!Chainloader.PluginInfos.TryGetValue(NewtGuid, out var newt) ||
-                newt.Metadata.Version != new System.Version(1, 7, 0))
+                !Compatibility.Supports(newt.Metadata.Version))
             {
-                Logger.LogWarning("Deaktiviert: Dieser Test-Fix ist fuer NewtCraftHub 1.7.0 bestimmt.");
+                Logger.LogWarning("Deaktiviert: NewtCraftHub-Version nicht freigegeben. Unterstuetzt: " +
+                    string.Join(", ", Compatibility.SupportedVersions));
                 return;
             }
             if (Chainloader.PluginInfos.ContainsKey("advize.PlantEverything"))
@@ -85,7 +86,9 @@ namespace NewtCraftHubPlantRemovalFix
                     prefix: new HarmonyMethod(typeof(RemovalDiagnostics), nameof(RemovalDiagnostics.Prefix)),
                     postfix: new HarmonyMethod(typeof(RemovalDiagnostics), nameof(RemovalDiagnostics.Postfix)));
                 _ready = true;
-                Logger.LogInfo("Bereit: Abbauziel fuer gepflanzte NewtCraftHub-Sammelpflanzen wird ergaenzt (Hammer/Kultivator). Referenzpruefung: Valheim 1.0.17, NewtCraftHub 1.7.0.");
+                Logger.LogInfo("Bereit: Abbauziel fuer gepflanzte NewtCraftHub-Sammelpflanzen wird ergaenzt (Hammer/Kultivator). " +
+                    "Referenzpruefung: Valheim " + Compatibility.ReferenceGameVersion +
+                    "; NewtCraftHub " + newt.Metadata.Version + ".");
             }
             catch (Exception exception)
             {

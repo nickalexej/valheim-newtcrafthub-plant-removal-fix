@@ -4,13 +4,13 @@
 
 Der Fix ermöglicht das Entfernen gepflanzter Pilze und anderer NewtCraftHub-Sammelpflanzen mit Bauhammer oder Kultivator. Er benötigt NewtCraftHub als Abhängigkeit und funktioniert nicht eigenständig.
 
-[English documentation](README.en.md) · [Release v0.1.0](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/releases/tag/v0.1.0) · [Fehler melden](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/issues)
+[English documentation](README.en.md) · [Aktuelles Release](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/releases/latest) · [Fehler melden](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/issues/new/choose) · [Wartung](MAINTENANCE.md)
 
 ## Versionen und Abhängigkeiten
 
 | Bestandteil | Version / Voraussetzung |
 | --- | --- |
-| Dieser Fix | **0.1.0** |
+| Dieser Fix | **0.1.1** |
 | Erforderliche Hauptmod | **Anatta_Labs-NewtCraftHub-1.7.0** |
 | BepInEx | BepInExPack Valheim, entsprechend der NewtCraftHub-Installation |
 | Valheim-Referenz für Build und statische Prüfung | **1.0.17** |
@@ -18,7 +18,7 @@ Der Fix ermöglicht das Entfernen gepflanzter Pilze und anderer NewtCraftHub-Sam
 
 **1.7.0 bezeichnet die Version von NewtCraftHub, nicht die Version von Valheim oder des Fixes.**
 
-Die Abhängigkeit ist im BepInEx-Plugin deklariert. Zusätzlich prüft der Fix beim Start, ob NewtCraftHub exakt Version **1.7.0** hat. Bei einer anderen Version deaktiviert er sich. Für spätere NewtCraftHub-Versionen ist dieser Release nicht freigegeben.
+Die Abhängigkeit ist im BepInEx-Plugin deklariert. Die zentrale [Kompatibilitätsdatei](maintenance/compatibility.json) führt die geprüften Versionen und DLL-Prüfsummen. Daraus werden die Versionsfreigaben im Plugin und die Paketangaben erzeugt. Dieser Release aktiviert sich ausschließlich mit NewtCraftHub **1.7.0**. Ungeprüfte Versionen bleiben deaktiviert.
 
 Wenn `PlantEverything` installiert ist, deaktiviert sich der Fix ebenfalls, da diese Mod die Sammelpflanzen übernimmt.
 
@@ -105,7 +105,7 @@ Zum Deinstallieren Valheim schließen und die Zusatz-DLL entfernen. Der Fix spei
 
 ## Quellcode bauen
 
-Benötigt werden das **.NET SDK 10** und die Bibliotheken aus einer eigenen Valheim-Installation. Die Spielebibliotheken werden nicht mitgeliefert.
+Benötigt werden das **.NET SDK 10**, **PowerShell 7**, **Python 3.11 oder neuer** und die Bibliotheken aus einer eigenen Valheim-Installation. Die Spielebibliotheken werden nicht mitgeliefert. Der vollständige Prüfablauf verlangt die in der Kompatibilitätsdatei dokumentierten Prüfsummen; abweichende Spielreferenzen müssen zuerst geprüft und dort erfasst werden.
 
 Aus dem Repository-Ordner zum Beispiel unter Windows ausführen und den Pfad anpassen:
 
@@ -122,15 +122,26 @@ Für Build, statische API-Prüfung und Release-Paket gibt es außerdem ein Power
 ./scripts/package.ps1 -ValheimManaged "C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed" -VerifyApi
 ```
 
-Das Skript schreibt die eigene DLL, ein Installations-ZIP und Prüfsummen nach `dist/`.
+Das Skript führt die Wartungs-Tests, die statische API-Prüfung und die Paketprüfung immer aus. Es schreibt die eigene DLL, ein Installations-ZIP, `SHA256SUMS.txt` und `BUILD-VERIFICATION.json` nach `dist/0.1.1/`. Der Prüfbericht hält Commit, private Referenz-Prüfsummen und die tatsächlich ausgeführten Prüfungen fest. Für ein veröffentlichbares Paket muss der Commit eingecheckt und der Arbeitsbaum unverändert sein.
+
+## Automatische Wartung
+
+GitHub prüft täglich um **09:17 Uhr, Europe/Berlin**, Thunderstore-Metadaten sowie den Changelog und die DLL im offiziellen Paket. Änderungen innerhalb derselben Mod-Version werden ebenfalls erkannt. Pro Änderung gibt es einen Wartungsvorgang; unveränderte Daten erzeugen kein weiteres Release.
+
+Der Wartungs-Chat auf dem MacMini prüft täglich um **09:47 Uhr** neue Versionen und neue Fehlerangaben. Eine Freigabe setzt die Untersuchung des tatsächlichen Upstream-Codes, einen Build mit privaten Spielreferenzen, die API- und Paketprüfung sowie erfolgreiche GitHub-Prüfungen für denselben Commit voraus. Der Veröffentlichungs-Workflow prüft danach Tag, Quellcode-Zuordnung und alle Release-Dateien erneut. Die originale NewtCraftHub-DLL und Spielbibliotheken werden nicht veröffentlicht.
+
+Ein manueller Spieltest ist keine Voraussetzung für künftige stabile Releases. Release-Notizen unterscheiden ausdrücklich zwischen statischer Prüfung und tatsächlich durchgeführten Spieltests. Sobald eine geprüfte NewtCraftHub-Version die Korrektur enthält, dokumentieren wir die Empfehlung zum Entfernen dieses Addons und beenden die automatische Anpassung.
+
+Einrichtung, erlaubte automatische Aktionen, Zugangsbeschränkungen, Ausfallüberwachung und das Pausieren sind in [MAINTENANCE.md](MAINTENANCE.md) beschrieben. Ein Abschalten der Wartung wird respektiert. Betrieb und Zeitpunkt hängen von GitHub, Strom, Netzwerk, laufender Codex-App, Anmeldung und Nutzungslimits ab.
 
 ## Prüfungen und bekannte Grenzen
 
 - Release-Build gegen die vorhandenen Valheim-1.0.17-Bibliotheken: **0 Fehler, 0 Warnungen**.
-- **83 API-Verweise** der DLL statisch aufgelöst.
+- **85 API-Verweise** der DLL statisch aufgelöst.
 - Spielmethoden, Abbauprüfungen und Harmony-Zustandszuordnung geprüft.
+- **28 Wartungs-Tests** für Monitor, Ausfälle, Issue-Aufnahme, Merge-Schutz und Release-Prüfung bestanden.
 - Der Benutzer hat erfolgreiches Entfernen eines gepflanzten Pilzes mit dem ursprünglichen Fix auf seinem Gaming-PC bestätigt. Die genaue Valheim-Version dieses Tests wurde nicht festgehalten.
-- Die Veröffentlichung übernimmt denselben Plugin-Quellcode. Die Build-Konfiguration lässt Debugdateien und lokale Debugpfade weg.
+- Version 0.1.1 übernimmt die Abbaulogik des ursprünglichen Fixes und ergänzt die aus der Kompatibilitätsdatei erzeugte Versionsfreigabe. Ein neuer Spieltest für 0.1.1 wurde nicht durchgeführt. Die Build-Konfiguration lässt Debugdateien und lokale Debugpfade weg.
 
 Nicht gesondert verifiziert sind Mehrspielerbetrieb, Materialrückgabe im Spiel, alle übrigen Sammelpflanzen, Controller-Eingabe und sämtliche Kombinationen mit anderen Mods. Die statische API-Prüfung startet weder Valheim noch Unity.
 

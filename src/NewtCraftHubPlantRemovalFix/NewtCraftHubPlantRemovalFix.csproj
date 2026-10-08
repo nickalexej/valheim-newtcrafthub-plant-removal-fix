@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../maintenance/Version.props" />
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AssemblyName>NewtCraftHubPlantRemovalFix</AssemblyName>
     <RootNamespace>NewtCraftHubPlantRemovalFix</RootNamespace>
-    <Version>0.1.0</Version>
     <Deterministic>true</Deterministic>
     <DebugType>none</DebugType>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>

@@ -1,0 +1,21 @@
+name: Maintenance CI
+on:
+  push:
+    branches: [main, 'maintenance/**']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - run: python3 -m maintenance.generate --check
+      - run: python3 -m unittest discover -s tests -v
+      - run: git diff --exit-code

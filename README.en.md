@@ -1,10 +1,10 @@
 # Valheim NewtCraftHub Plant Removal Fix
 
-Community addon for [NewtCraftHub by Anatta Labs on Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), specifically **NewtCraftHub 1.7.0**. Fix version: **0.1.0**.
+Community addon for [NewtCraftHub by Anatta Labs on Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), specifically **NewtCraftHub 1.7.0**. Fix version: **0.1.1**.
 
 This addon enables removal of player-planted NewtCraftHub mushrooms and other pickables with the hammer or cultivator. **It requires NewtCraftHub and does not work as a standalone mod.** The runtime version check disables it when NewtCraftHub is not exactly 1.7.0, when PlantEverything is installed, or when the expected game methods are unavailable.
 
-[German documentation](README.md) · [Download v0.1.0](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/releases/tag/v0.1.0)
+[German documentation](README.md) · [Latest release](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/releases/latest) · [Report a bug](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/issues/new/choose) · [Maintenance](MAINTENANCE.md)
 
 ## Installation
 
@@ -42,17 +42,27 @@ When reporting a problem, include the addon version, NewtCraftHub version, **gam
 
 ## Building and validation
 
-Use the .NET SDK **10** and game assemblies from your own installation. The plugin targets **.NET Framework 4.7.2**. Game and framework libraries are not distributed in this repository or its release assets.
+Use the .NET SDK **10**, **PowerShell 7**, **Python 3.11 or newer**, and game assemblies from your own installation. The plugin targets **.NET Framework 4.7.2**. The complete verification requires the reference hashes in [maintenance/compatibility.json](maintenance/compatibility.json). Game and framework libraries are not distributed in this repository or its release assets.
 
 ```powershell
 ./scripts/package.ps1 -ValheimManaged "C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed" -VerifyApi
 ```
 
-See [README.md](README.md#quellcode-bauen) for direct `dotnet` commands. Output is written to `dist/`.
+See [README.md](README.md#quellcode-bauen) for direct `dotnet` commands. The script always runs maintenance tests, static API verification and package checks. Output is written to `dist/0.1.1/`: the addon DLL, installation ZIP, `SHA256SUMS.txt`, and `BUILD-VERIFICATION.json`. A publishable proof must identify a committed, clean checkout.
 
-The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **83 API references**, validated game methods and checked Harmony state pairing. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. This release uses the same plugin source, with debug-file generation disabled.
+The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **85 API references**, validated game methods and checked Harmony state pairing. **28 maintenance tests** passed. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. Version 0.1.1 keeps the original removal logic and adds compatibility declarations generated from the central file. No new gameplay test was performed for 0.1.1. Debug-file generation remains disabled.
 
 Multiplayer, in-game refunds, every other plant prefab, controller input and all other mod combinations have not been independently tested. Static verification does not run the game.
+
+## Automated maintenance
+
+GitHub checks official Thunderstore metadata and package DLL/changelog hashes daily at **09:17 Europe/Berlin**, including changed contents under an existing version. One maintenance issue tracks each change. Unchanged upstream data does not create a new release.
+
+A dedicated Codex maintenance chat on the MacMini runs daily at **09:47**. Compatibility requires inspection of actual upstream planting/removal code, a build against private game references, API/package verification, and successful GitHub checks for the same commit. A trusted publishing workflow validates the tag, commit, version declarations and release assets again. Upstream and game DLLs are never released.
+
+Manual gameplay testing is not a gate for future stable releases; release notes state exactly which checks ran. Once code inspection and appropriate checks confirm that NewtCraftHub includes the correction, we document removal of this addon and stop automatic adaptation. The supported version list and generated plugin/package declarations come from [maintenance/compatibility.json](maintenance/compatibility.json); unverified versions remain disabled.
+
+See [MAINTENANCE.md](MAINTENANCE.md) for setup, permitted actions, repository-scoped access, outage monitoring, pausing and retirement. Operation depends on power, networking, a running Codex app, valid authentication, usage limits and GitHub scheduling.
 
 ## Credits and license
 

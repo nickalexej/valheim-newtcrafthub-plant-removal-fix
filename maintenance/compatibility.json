@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "repository": "nickalexej/valheim-newtcrafthub-plant-removal-fix",
+  "fix_version": "0.1.1",
+  "status": "active",
+  "upstream_fixed_from": null,
+  "minimum_newtcrafthub_version": "1.7.0",
+  "supported": [
+    {
+      "version": "1.7.0",
+      "dll_sha256": "92fb54768795b25f853161a62555bc05be8e7b159ad18e1bd958a97945e512e6",
+      "changelog_sha256": "513ff51bda50d7ac171c83800d0abc17937cddc5a3087c3e1ba50b7ab6f1fac8",
+      "assessment": "required",
+      "evidence": "Pflanz- und Abbaucode von 1.7.0 untersucht; Abbau vom Benutzer auf seinem Gaming-PC bestätigt.",
+      "gameplay_test": "user-confirmed-removal; Valheim-Version des Gaming-PC nicht dokumentiert"
+    }
+  ],
+  "valheim_reference": {
+    "version": "1.0.17",
+    "source": "Private, unveränderte Steam-Installation; nur statische Referenzprüfung.",
+    "sha256": {
+      "assembly_valheim.dll": "fdd468f2a5dd72e7e56781ee6596093d8eface97c1a736090e30022cbb004911",
+      "assembly_utils.dll": "4ba2cc8706879f3324db944831e5c93304bc3b60b13c507767d28547d22930e3",
+      "UnityEngine.dll": "6ca0717f63d3a56702d6a4d3fad69bfa5dc655c5c3fb5c45b449fc7d116c81d9",
+      "UnityEngine.CoreModule.dll": "b4ff1589827d3d3fcb101338d15cf5da64a1fcc67859971596b3cfda5d33ded9",
+      "UnityEngine.PhysicsModule.dll": "9fffb2fea9cc50c07f488c5b47bc79ecfa554c2e87f66a5ccd1e2e36fdf22976"
+    }
+  }
+}

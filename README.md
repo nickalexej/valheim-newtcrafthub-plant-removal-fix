@@ -1,6 +1,6 @@
 # Valheim NewtCraftHub Plant Removal Fix
 
-**Community-Addon für [NewtCraftHub von Anatta Labs auf Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), ausschließlich für Version 1.7.0.**
+**Community-Addon für [NewtCraftHub von Anatta Labs auf Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), für die geprüften Versionen 1.7.0 und 1.9.0.**
 
 Der Fix ermöglicht das Entfernen gepflanzter Pilze und anderer NewtCraftHub-Sammelpflanzen mit Bauhammer oder Kultivator. Er benötigt NewtCraftHub als Abhängigkeit und funktioniert nicht eigenständig.
 
@@ -10,15 +10,15 @@ Der Fix ermöglicht das Entfernen gepflanzter Pilze und anderer NewtCraftHub-Sam
 
 | Bestandteil | Version / Voraussetzung |
 | --- | --- |
-| Dieser Fix | **0.1.1** |
-| Erforderliche Hauptmod | **Anatta_Labs-NewtCraftHub-1.7.0** |
+| Dieser Fix | **0.1.2** |
+| Erforderliche Hauptmod | **NewtCraftHub 1.7.0 oder 1.9.0** (Mindestabhängigkeit: 1.7.0) |
 | BepInEx | BepInExPack Valheim, entsprechend der NewtCraftHub-Installation |
 | Valheim-Referenz für Build und statische Prüfung | **1.0.17** |
 | NewtCraftHub-Einstellungen | `Enabled = true` und `PlantPickables = true` |
 
-**1.7.0 bezeichnet die Version von NewtCraftHub, nicht die Version von Valheim oder des Fixes.**
+**1.7.0 und 1.9.0 bezeichnen Versionen von NewtCraftHub, nicht die Version von Valheim oder des Fixes.**
 
-Die Abhängigkeit ist im BepInEx-Plugin deklariert. Die zentrale [Kompatibilitätsdatei](maintenance/compatibility.json) führt die geprüften Versionen und DLL-Prüfsummen. Daraus werden die Versionsfreigaben im Plugin und die Paketangaben erzeugt. Dieser Release aktiviert sich ausschließlich mit NewtCraftHub **1.7.0**. Ungeprüfte Versionen bleiben deaktiviert.
+Die Abhängigkeit ist im BepInEx-Plugin deklariert. Die zentrale [Kompatibilitätsdatei](maintenance/compatibility.json) führt die geprüften Versionen und DLL-Prüfsummen. Daraus werden die Versionsfreigaben im Plugin und die Paketangaben erzeugt. Dieser Release aktiviert sich mit NewtCraftHub **1.7.0 oder 1.9.0**. Ungeprüfte Versionen, einschließlich 1.8.0, bleiben deaktiviert.
 
 Wenn `PlantEverything` installiert ist, deaktiviert sich der Fix ebenfalls, da diese Mod die Sammelpflanzen übernimmt.
 
@@ -29,7 +29,7 @@ Die DLL und das Installations-ZIP stehen unter [Releases](https://github.com/nic
 ### Mit r2modman oder Thunderstore Mod Manager
 
 1. Valheim vollständig schließen.
-2. Das verwendete Valheim-Profil öffnen und prüfen, dass **NewtCraftHub 1.7.0** und dessen Abhängigkeiten installiert sind.
+2. Das verwendete Valheim-Profil öffnen und prüfen, dass **NewtCraftHub 1.7.0 oder 1.9.0** und dessen Abhängigkeiten installiert sind.
 3. `NewtCraftHubPlantRemovalFix.dll` aus dem Release herunterladen.
 4. Über **Settings → Browse profile folder** den Profilordner öffnen.
 5. Die DLL nach `BepInEx/plugins/NewtCraftHubPlantRemovalFix/` kopieren. Den Unterordner bei Bedarf anlegen.
@@ -39,7 +39,7 @@ Das Installations-ZIP enthält zusätzlich ein Thunderstore-Manifest mit `Anatta
 
 ### Manuelle BepInEx-Installation
 
-1. Valheim schließen und NewtCraftHub **1.7.0** samt Abhängigkeiten installieren.
+1. Valheim schließen und NewtCraftHub **1.7.0 oder 1.9.0** samt Abhängigkeiten installieren.
 2. Die DLL in den Plugin-Ordner der Installation kopieren, aus der du das modifizierte Spiel startest:
 
 ```text
@@ -58,7 +58,7 @@ Die DLL wird **zusätzlich** zu NewtCraftHub installiert. Du benötigst keine Da
 
 Einen mit NewtCraftHub gepflanzten Pilz aus kurzer Entfernung anvisieren, Hammer oder Kultivator ausrüsten und bei geschlossenem Baumenü die normale Abbautaste drücken und loslassen. Mit der Standardbelegung ist das die **mittlere Maustaste**.
 
-Unterstützt werden die zehn Sammelpflanzen aus NewtCraftHub 1.7.0:
+Unterstützt werden die zehn Sammelpflanzen aus NewtCraftHub 1.7.0 und 1.9.0:
 
 - Himbeer-, Blaubeer- und Moltebeersträucher.
 - Rote, gelbe und blaue Pilze.
@@ -72,7 +72,7 @@ Der Spieler, der den Fix verwenden möchte, installiert ihn auf seinem eigenen C
 
 ## Was wird korrigiert?
 
-NewtCraftHub 1.7.0 markiert seine Sammelpflanzen zwar als entfernbar, ergänzt aber nicht die Zielerkennung für die Ebene `item` und die Abbau-Freigabe des Kultivators. In der geprüften Valheim-Version 1.0.17 berücksichtigt die normale Abbau-Zielmaske diese Ebene nicht.
+NewtCraftHub 1.7.0 und 1.9.0 markieren ihre Sammelpflanzen zwar als entfernbar, ergänzen aber nicht die Zielerkennung für die Ebene `item` und die Abbau-Freigabe des Kultivators. In der geprüften Valheim-Version 1.0.17 berücksichtigt die normale Abbau-Zielmaske diese Ebene nicht.
 
 Der Fix erweitert die Maske vor `Player.UpdatePlacement` nur dann vorübergehend, wenn der erste Treffer eine unterstützte, von Spielern gepflanzte Sammelpflanze ist. Beim Kultivator aktiviert er für diesen Aufruf außerdem `m_canRemovePieces`.
 
@@ -122,7 +122,7 @@ Für Build, statische API-Prüfung und Release-Paket gibt es außerdem ein Power
 ./scripts/package.ps1 -ValheimManaged "C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed" -VerifyApi
 ```
 
-Das Skript führt die Wartungs-Tests, die statische API-Prüfung und die Paketprüfung immer aus. Es schreibt die eigene DLL, ein Installations-ZIP, `SHA256SUMS.txt` und `BUILD-VERIFICATION.json` nach `dist/0.1.1/`. Der Prüfbericht hält Commit, private Referenz-Prüfsummen und die tatsächlich ausgeführten Prüfungen fest. Für ein veröffentlichbares Paket muss der Commit eingecheckt und der Arbeitsbaum unverändert sein.
+Das Skript führt die Wartungs-Tests, die statische API-Prüfung und die Paketprüfung immer aus. Es schreibt die eigene DLL, ein Installations-ZIP, `SHA256SUMS.txt` und `BUILD-VERIFICATION.json` nach `dist/0.1.2/`. Der Prüfbericht hält Commit, private Referenz-Prüfsummen und die tatsächlich ausgeführten Prüfungen fest. Für ein veröffentlichbares Paket muss der Commit eingecheckt und der Arbeitsbaum unverändert sein.
 
 ## Automatische Wartung
 
@@ -139,9 +139,9 @@ Einrichtung, erlaubte automatische Aktionen, Zugangsbeschränkungen, Ausfallübe
 - Release-Build gegen die vorhandenen Valheim-1.0.17-Bibliotheken: **0 Fehler, 0 Warnungen**.
 - **85 API-Verweise** der DLL statisch aufgelöst.
 - Spielmethoden, Abbauprüfungen und Harmony-Zustandszuordnung geprüft.
-- **28 Wartungs-Tests** für Monitor, Ausfälle, Issue-Aufnahme, Merge-Schutz und Release-Prüfung bestanden.
+- **68 Wartungs-Tests** für Monitor, Ausfälle, Issue-Aufnahme, Merge-Schutz und Release-Prüfung bestanden.
 - Der Benutzer hat erfolgreiches Entfernen eines gepflanzten Pilzes mit dem ursprünglichen Fix auf seinem Gaming-PC bestätigt. Die genaue Valheim-Version dieses Tests wurde nicht festgehalten.
-- Version 0.1.1 übernimmt die Abbaulogik des ursprünglichen Fixes und ergänzt die aus der Kompatibilitätsdatei erzeugte Versionsfreigabe. Ein neuer Spieltest für 0.1.1 wurde nicht durchgeführt. Die Build-Konfiguration lässt Debugdateien und lokale Debugpfade weg.
+- Version 0.1.2 ergänzt die statisch geprüfte Freigabe für NewtCraftHub 1.9.0; die Abbaulogik des Fixes bleibt unverändert. Pflanz-, Ersteller- und Abbaupfade der Hauptmod entsprechen weiterhin 1.7.0. Für 0.1.2 mit NewtCraftHub 1.9.0 wurde kein Spieltest durchgeführt. Die Build-Konfiguration lässt Debugdateien und lokale Debugpfade weg.
 
 Nicht gesondert verifiziert sind Mehrspielerbetrieb, Materialrückgabe im Spiel, alle übrigen Sammelpflanzen, Controller-Eingabe und sämtliche Kombinationen mit anderen Mods. Die statische API-Prüfung startet weder Valheim noch Unity.
 

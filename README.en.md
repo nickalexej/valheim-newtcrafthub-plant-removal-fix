@@ -1,29 +1,29 @@
 # Valheim NewtCraftHub Plant Removal Fix
 
-Community addon for [NewtCraftHub by Anatta Labs on Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), specifically **NewtCraftHub 1.7.0**. Fix version: **0.1.1**.
+Community addon for [NewtCraftHub by Anatta Labs on Thunderstore](https://thunderstore.io/c/valheim/p/Anatta_Labs/NewtCraftHub/), for the verified versions **NewtCraftHub 1.7.0 and 1.9.0**. Fix version: **0.1.2**.
 
-This addon enables removal of player-planted NewtCraftHub mushrooms and other pickables with the hammer or cultivator. **It requires NewtCraftHub and does not work as a standalone mod.** The runtime version check disables it when NewtCraftHub is not exactly 1.7.0, when PlantEverything is installed, or when the expected game methods are unavailable.
+This addon enables removal of player-planted NewtCraftHub mushrooms and other pickables with the hammer or cultivator. **It requires NewtCraftHub and does not work as a standalone mod.** The runtime version check disables it when NewtCraftHub is neither 1.7.0 nor 1.9.0, when PlantEverything is installed, or when the expected game methods are unavailable.
 
 [German documentation](README.md) · [Latest release](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/releases/latest) · [Report a bug](https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix/issues/new/choose) · [Maintenance](MAINTENANCE.md)
 
 ## Installation
 
 1. Close Valheim.
-2. Install **Anatta_Labs-NewtCraftHub-1.7.0** and its required dependencies in your active mod profile.
+2. Install **NewtCraftHub 1.7.0 or 1.9.0** and its required dependencies in your active mod profile.
 3. Download `NewtCraftHubPlantRemovalFix.dll` from the release.
 4. In r2modman / Thunderstore Mod Manager, open **Settings → Browse profile folder**.
 5. Copy the DLL to `BepInEx/plugins/NewtCraftHubPlantRemovalFix/` inside that profile. Create the folder if necessary.
 6. Enable NewtCraftHub's `Enabled` and `PlantPickables` settings, then use **Start modded**.
 
-For a manual BepInEx installation, use the same path inside the Valheim installation you launch. Install this DLL alongside NewtCraftHub. The release ZIP includes a dependency manifest for local import; the new ZIP's automatic mod-manager import has not been tested.
+For a manual BepInEx installation, use the same path inside the Valheim installation you launch. Install this DLL alongside NewtCraftHub. Unverified versions, including 1.8.0, remain disabled. The release ZIP includes a dependency manifest with 1.7.0 as the minimum requirement for local import; the new ZIP's automatic mod-manager import has not been tested.
 
 Aim at a planted mushroom from close range and press/release the normal removal button with a hammer or cultivator equipped and the build menu closed. The default mouse binding is the **middle mouse button**.
 
-The addon handles the ten pickable prefabs listed by NewtCraftHub 1.7.0. It does not enable removal of wild plants. Existing planted objects can be recognized if their creator ID and network state are valid. Each player who uses this fix needs it on their own client; multiplayer validation remains pending.
+The addon handles the ten pickable prefabs listed by NewtCraftHub 1.7.0 and 1.9.0. It does not enable removal of wild plants. Existing planted objects can be recognized if their creator ID and network state are valid. Each player who uses this fix needs it on their own client; multiplayer validation remains pending.
 
 ## Implementation
 
-NewtCraftHub marks planted pickables as removable, but does not add the `item` layer to removal targeting or enable the cultivator's `m_canRemovePieces` flag. The verified Valheim 1.0.17 removal mask excludes `item`.
+NewtCraftHub 1.7.0 and 1.9.0 mark planted pickables as removable, but do not add the `item` layer to removal targeting or enable the cultivator's `m_canRemovePieces` flag. The verified Valheim 1.0.17 removal mask excludes `item`.
 
 The prefix on `Player.UpdatePlacement` temporarily extends the mask only when the first raycast hit is a supported player-planted pickable. It also enables cultivator removal for that call. Hover detection and removal therefore share the same target. A Harmony finalizer restores both settings after returns or exceptions.
 
@@ -48,9 +48,9 @@ Use the .NET SDK **10**, **PowerShell 7**, **Python 3.11 or newer**, and game as
 ./scripts/package.ps1 -ValheimManaged "C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed" -VerifyApi
 ```
 
-See [README.md](README.md#quellcode-bauen) for direct `dotnet` commands. The script always runs maintenance tests, static API verification and package checks. Output is written to `dist/0.1.1/`: the addon DLL, installation ZIP, `SHA256SUMS.txt`, and `BUILD-VERIFICATION.json`. A publishable proof must identify a committed, clean checkout.
+See [README.md](README.md#quellcode-bauen) for direct `dotnet` commands. The script always runs maintenance tests, static API verification and package checks. Output is written to `dist/0.1.2/`: the addon DLL, installation ZIP, `SHA256SUMS.txt`, and `BUILD-VERIFICATION.json`. A publishable proof must identify a committed, clean checkout.
 
-The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **85 API references**, validated game methods and checked Harmony state pairing. **28 maintenance tests** passed. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. Version 0.1.1 keeps the original removal logic and adds compatibility declarations generated from the central file. No new gameplay test was performed for 0.1.1. Debug-file generation remains disabled.
+The Release build passed without errors or warnings against Valheim **1.0.17**. Static checks resolved **85 API references**, validated game methods and checked Harmony state pairing. **68 maintenance tests** passed. A user reported successful planted-mushroom removal with the original addon on their gaming PC; that test's exact game version was not recorded. Version 0.1.2 adds statically verified compatibility with NewtCraftHub 1.9.0 while keeping the addon removal logic unchanged. The upstream planting, creator and removal paths still match 1.7.0. No gameplay test was performed for 0.1.2 with NewtCraftHub 1.9.0. Debug-file generation remains disabled.
 
 Multiplayer, in-game refunds, every other plant prefab, controller input and all other mod combinations have not been independently tested. Static verification does not run the game.
 

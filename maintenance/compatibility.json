@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "nickalexej/valheim-newtcrafthub-plant-removal-fix",
-  "fix_version": "0.1.1",
+  "fix_version": "0.1.2",
   "status": "active",
   "upstream_fixed_from": null,
   "minimum_newtcrafthub_version": "1.7.0",
@@ -13,6 +13,14 @@
       "assessment": "required",
       "evidence": "Pflanz- und Abbaucode von 1.7.0 untersucht; Abbau vom Benutzer auf seinem Gaming-PC bestätigt.",
       "gameplay_test": "user-confirmed-removal; Valheim-Version des Gaming-PC nicht dokumentiert"
+    },
+    {
+      "version": "1.9.0",
+      "dll_sha256": "6300610ea9b91fe64e311e0f022ed7d5ecfb3450a2394a4650a8a6afceebcf00",
+      "changelog_sha256": "f1c99669b610f8fd2fde509b1f749b5b78d9fddd236e1aefb40ed21714cbbf93",
+      "assessment": "required",
+      "evidence": "NewtCraftHub 1.9.0 statisch mit ILSpy gegen 1.7.0 verglichen: PlantPickables, PlantPickablesHook und alle fünf PlantPickables-Patchklassen sowie GridPlanting/FarmGridPlantAllPatch unverändert. Prepare setzt m_canBeRemoved und erstattbare Ressourcen; MayRemove/CheckCanRemovePiece lassen nur gepflanzte Sammelpflanzen zu. Weiterhin keine Erweiterung von m_removeRayMask um item und keine Kultivator-Freigabe m_canRemovePieces. Plugin-GUID, Enabled/PlantPickables-Konfiguration und zehn Prefab-Namen unverändert.",
+      "gameplay_test": "not-run"
     }
   ],
   "valheim_reference": {

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3 – 2026-10-14
+
+- NewtCraftHub **1.9.1** nach statischem Vergleich der Pflanz- und Abbaupfade freigegeben.
+- Relevante Pflanz-/Abbauklassen weiterhin unverändert; die Zielmaske und Kultivator-Freigabe fehlen weiterhin.
+- Eingebaute Kompatibilitätsliste um 1.9.1 ergänzt; 1.7.0 und 1.9.0 bleiben unterstützt.
+- Abbaulogik, Mindestabhängigkeit und private Valheim-Referenz 1.0.17 unverändert.
+- Für diese Version kein Funktionstest in Valheim ausgeführt.
+
 ## 0.1.2 – 2026-10-12
 
 - NewtCraftHub **1.9.0** nach statischem Vergleich der Pflanz- und Abbaupfade mit 1.7.0 freigegeben.

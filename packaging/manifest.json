@@ -1,6 +1,6 @@
 {
   "name": "NewtCraftHub_PlantRemovalFix",
-  "version_number": "0.1.2",
+  "version_number": "0.1.3",
   "website_url": "https://github.com/nickalexej/valheim-newtcrafthub-plant-removal-fix",
   "description": "Community addon fixing removal of planted mushrooms and pickables. Requires NewtCraftHub; does not run standalone. Created with AI assistance.",
   "dependencies": [

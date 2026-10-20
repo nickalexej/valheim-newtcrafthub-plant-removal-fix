@@ -47,6 +47,13 @@ Aktualisiere README, README.en.md und CHANGELOG passend zur Änderung. Verwende 
 oder KI-Vermerke in Commit-Texten. Der KI-Hinweis am Ende der README bleibt erhalten.
 Commit, Push und ein eigener PR sind freigegeben.
 
+Übernimm für jeden eigenen Wartungs-PR den Abschnitt „Wartung und Prüfstatus“ aus
+.github/pull_request_template.md, auch bei Erstellung über Connector oder gh mit
+explizitem Beschreibungstext. Nenne die KI-gestützte Wartung (AI-maintained), nur
+tatsächlich ausgeführte Prüfungen mit Ergebnissen und ausdrücklich den Spieltest-Status.
+Ohne belegten Spieltest lautet dieser: „Funktionstest in Valheim: nicht durchgeführt.“
+Kleine Versionssprünge allein belegen keine Kompatibilität und ersetzen die Codeprüfung nicht.
+
 Führe Wartungstests und maintenance.generate --check aus. Prüfe den sauberen PR-Commit
 mit python3 -m maintenance.release_policy --ref HEAD --enforce. Nur bei erforderlichem
 Plugin-Release baue diesen Commit mit scripts/package.ps1 gegen die privaten

@@ -21,14 +21,23 @@ Keine privaten Spiel-, Unity-, BepInEx- oder Upstream-DLLs werden hochgeladen.
 - Checkout: /Users/nickalexej/dev/valheim-newtcrafthub-plant-removal-fix
 - Referenzen: /Users/nickalexej/.local/share/newtcrafthub-maintenance/valheim/1.0.17/Managed
 - Werkzeuge: .NET SDK 10, PowerShell, Python 3, Git, gh und ILSpy über das lokale Toolmanifest.
-- GitHub-Zugang: eigene GitHub-App ausschließlich auf diesem Repository installiert.
-  Berechtigungen: Contents, Pull requests, Issues, Actions, Workflows, Commit statuses
-  und Variables jeweils Schreiben; Metadata Lesen. Keine Administration, Secrets,
-  Organisationen oder weiteren Repositories.
-- Konfiguration: ~/.config/newtcrafthub-maintenance/github-app.json, Dateimodus 600.
-  Felder: repository, repository_id, app_id, installation_id und private_key.
-  Privater Schlüssel ebenfalls Modus 600. Tokens werden für dieses Repository
-  kurzfristig erzeugt und nicht in Git-Konfiguration oder Logs gespeichert.
+- GitHub-Zugang: GitHub-Connector für Repository-/PR-Arbeit; lokale gh-Anmeldung für
+  Wartungsskripte, Git-Transport, Repository-Variablen, Workflow-Starts und Release-Dateien.
+  Anmeldung mit gh auth login --hostname github.com; erforderliche OAuth-Bereiche:
+  repo und workflow. Fehlendes workflow-Recht mit gh auth refresh -h github.com -s workflow
+  ergänzen. Keine eigene GitHub-App-Konfiguration und kein privater App-Schlüssel nötig.
+- maintenance.github_auth übernimmt die aktive gh-Anmeldung intern ohne Token-Ausgabe
+  oder eigene Speicherung. Lokal werden geerbte Token-Umgebungsvariablen ignoriert.
+  Alle API-Aufrufe des Wartungsclients zielen auf dieses Repository; Git prüft origin.
+  Die gh-Kontorechte selbst sind breiter als dieser Wartungsauftrag.
+- In GitHub Actions wird ausschließlich der workfloweigene GITHUB_TOKEN des erwarteten
+  Repositorys verwendet; eine interaktive gh-Anmeldung auf dem Runner ist nicht nötig.
+- Falls dem Connector eine benötigte Funktion oder ein Schreibrecht fehlt, dieselbe
+  erlaubte Repository-/PR-Aktion über gh ausführen. Dabei bestehende PRs vor einem
+  erneuten Erstellversuch prüfen; Freigaben und Merge-Prüfungen bleiben unverändert.
+- Der Connector ersetzt die Authentifizierung lokaler Python-Prozesse nicht. Merges
+  erfolgen weiterhin ausschließlich über maintenance.macmini merge-pr; ein direktes
+  Connector-Merge darf diese Prüfungen nicht umgehen.
 
 GitHub-Labels: maintenance, upstream-update, automation-failure, triage, needs-info.
 Repository-Variablen: MAINTENANCE_ENABLED=true und MAC_LAST_RUN_AT als UTC-Zeitstempel.
@@ -52,7 +61,9 @@ Repository-Variablen: MAINTENANCE_ENABLED=true und MAC_LAST_RUN_AT als UTC-Zeits
    README, englische Dokumentation und CHANGELOG nur passend zur Änderung anpassen;
    nur nachweisbare Prüfungsergebnisse nennen.
 6. Commit und Push über python3 -m maintenance.github_auth git durchführen.
-   gh-Befehle über python3 -m maintenance.github_auth gh ausführen.
+   Repository-/PR-Arbeit bevorzugt über den Connector erledigen. Für lokale gh-Aufrufe
+   python3 -m maintenance.github_auth gh verwenden; der Wrapper setzt das Repository
+   selbst (kein zusätzliches --repo/-R). gh api erwartet repos/OWNER/REPO als Präfix.
 7. Wartungstests und maintenance.generate --check ausführen. Die Release-Entscheidung
    mit --ref HEAD --enforce für den sauberen PR-Commit prüfen. Nur bei erforderlichem
    Plugin-Release scripts/package.ps1 mit -ValheimManaged und bei wiederholtem lokalen
@@ -81,7 +92,7 @@ reasons, version_valid, status und owner_review_required. Ohne --ref werden auch
 Die Basis ist die höchste veröffentlichte stabile Plugin-Version aus der GitHub-API.
 Entwurf und Vorabversion zählen nicht. Der lokale Tag muss mit dem veröffentlichten
 Tag übereinstimmen und ein Vorfahr des Ziel-Commits sein. Fehlende Historie/Tags werden
-über den begrenzten Zugang nachgeladen; widersprüchliche Tags niemals überschreiben.
+über den vorgesehenen Wartungszugang nachgeladen; widersprüchliche Tags niemals überschreiben.
 Bei fehlender oder uneindeutiger Basis stoppt die Prüfung ohne Veröffentlichung.
 
 Verglichen werden Plugin-Quellen einschließlich Projekt und Lockdateien, zentrale

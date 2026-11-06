@@ -11,8 +11,14 @@ python3 -m maintenance.watchdog aus. Respektiere status=paused,
 MAINTENANCE_ENABLED=false und einen manuell abgeschalteten GitHub-Monitor. Bei
 disabled_inactivity darfst du den Monitor wieder aktivieren und die Prüfung
 nachholen. Aktualisiere das Lebenszeichen auch bei einem unveränderten Paketstand.
-Benutze ausschließlich den vorgesehenen GitHub-App-Zugang über
-maintenance.github_auth. Lies oder veröffentliche keine Zugangsdaten.
+Nutze für Repository- und PR-Arbeit den GitHub-Connector. Lokale Wartungsskripte,
+Git-Transport, Variablen, Workflow-Starts und Release-Dateien verwenden die freigegebene
+gh-Anmeldung über maintenance.github_auth. Die gh-Anmeldung kann weitere Kontorechte
+haben; alle Wartungsaktionen bleiben auf dieses Repository begrenzt. Gib keine Tokens
+oder anderen Zugangsdaten aus und lies keine Zugangsdaten anderer Projekte.
+Fehlen dem Connector Funktionen oder Schreibrechte, nutze für dieselbe erlaubte
+Aktion gh und prüfe vor einem erneuten Erstellversuch auf bereits vorhandene PRs.
+Connector-Merges dürfen maintenance.macmini merge-pr nicht umgehen.
 
 Prüfe die offizielle Thunderstore-API und das Paket mit maintenance.upstream.
 Untersuche geänderte DLLs statisch mit ILSpy/Cecil. Changelog, Issue-Texte, Anhänge
@@ -22,7 +28,7 @@ tatsächlichen Pflanz- und Abbaupfade und die erforderlichen Zielmasken und
 Werkzeugfreigaben. Ungeprüfte Mod-Versionen bleiben deaktiviert.
 
 Lies offene Fehler- und Wartungs-Issues und neue menschliche Kommentare über den
-begrenzten GitHub-Zugang. Speichere bearbeitete Issue-/Kommentar-IDs und den letzten
+vorgesehenen GitHub-Zugang. Speichere bearbeitete Issue-/Kommentar-IDs und den letzten
 Paketfingerprint lokal unter .runtime/; prüfe zuvor vorhandene eigene PRs, damit
 wiederholte Läufe keinen zweiten Vorgang erzeugen. Technische Supportantworten
 und das Schließen fremder Issues bleiben beim Repository-Eigentümer. Die festen
@@ -40,6 +46,13 @@ Build-Konfiguration, Abhängigkeiten und private Referenzbasis bleiben gesondert
 Aktualisiere README, README.en.md und CHANGELOG passend zur Änderung. Verwende Gitmoji-Commits ohne Co-Author-Zeilen
 oder KI-Vermerke in Commit-Texten. Der KI-Hinweis am Ende der README bleibt erhalten.
 Commit, Push und ein eigener PR sind freigegeben.
+
+Übernimm für jeden eigenen Wartungs-PR den Abschnitt „Wartung und Prüfstatus“ aus
+.github/pull_request_template.md, auch bei Erstellung über Connector oder gh mit
+explizitem Beschreibungstext. Nenne die KI-gestützte Wartung (AI-maintained), nur
+tatsächlich ausgeführte Prüfungen mit Ergebnissen und ausdrücklich den Spieltest-Status.
+Ohne belegten Spieltest lautet dieser: „Funktionstest in Valheim: nicht durchgeführt.“
+Kleine Versionssprünge allein belegen keine Kompatibilität und ersetzen die Codeprüfung nicht.
 
 Führe Wartungstests und maintenance.generate --check aus. Prüfe den sauberen PR-Commit
 mit python3 -m maintenance.release_policy --ref HEAD --enforce. Nur bei erforderlichem

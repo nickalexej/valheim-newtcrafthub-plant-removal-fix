@@ -54,15 +54,11 @@ The Release build passed without errors or warnings against Valheim **1.0.17**. 
 
 Multiplayer, in-game refunds, every other plant prefab, controller input and all other mod combinations have not been independently tested. Static verification does not run the game.
 
-## Automated maintenance
+## Manual maintenance
 
-GitHub checks official Thunderstore metadata and package DLL/changelog hashes daily at **09:17 Europe/Berlin**, including changed contents under an existing version. One maintenance issue tracks each change. Unchanged upstream data does not create a new release.
+The owner initiates compatibility checks and updates as needed. Players can report bugs through the issue form. Taking the maintenance computer offline does not open an issue or pull request.
 
-A dedicated Codex maintenance chat on the MacMini runs daily at **09:47**. Compatibility requires inspection of actual upstream planting/removal code, a build against private game references, API/package verification, and successful GitHub checks for the same commit. A trusted publishing workflow validates the tag, commit, version declarations and release assets again. Upstream and game DLLs are never released.
-
-Manual gameplay testing is not a gate for future stable releases; release notes state exactly which checks ran. Once code inspection and appropriate checks confirm that NewtCraftHub includes the correction, we document removal of this addon and stop automatic adaptation. The supported version list and generated plugin/package declarations come from [maintenance/compatibility.json](maintenance/compatibility.json); unverified versions remain disabled.
-
-See [MAINTENANCE.md](MAINTENANCE.md) for setup, permitted actions, GitHub connector and local CLI authentication, outage monitoring, pausing and retirement. Operation depends on power, networking, a running Codex app, valid authentication, usage limits and GitHub scheduling.
+Before approving a new NewtCraftHub version, we inspect the planting and removal code, build against private game references, and verify the API, package and CI results for the same commit. Release notes record whether a gameplay test was performed. See [MAINTENANCE.md](MAINTENANCE.md) for the procedure.
 
 ## Credits and license
 

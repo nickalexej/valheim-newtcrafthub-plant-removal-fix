@@ -6,46 +6,28 @@ import struct
 import tempfile
 import unittest
 import zipfile
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from maintenance.common import ROOT, SafeRedirect, compatibility, sha256
 from maintenance.generate import artifacts
 from maintenance.issues import FIELDS, MARKER, missing_fields, triage
-from maintenance.monitor import heartbeat_stale, run
+from maintenance.monitor import run
 from maintenance.package import DLL_NAME, PROOF_NAME, ZIP_DLL, expected_assets, verify_assets, zip_name
 from maintenance.release import publish, release_notes
 from maintenance.macmini import merge_pr
 from maintenance.upstream import fetch_upstream, known_snapshot, parse_package
-from maintenance.watchdog import run as watchdog
 
 COMMIT = "b" * 40
 
 
 class FakeGitHub:
     def __init__(self):
-        self.issues = {}
         self.calls = []
         self.comments = []
-        self.workflow = {"state": "active"}
-        self.variables = {}
         self.release = None
         self.assets = {}
         self.fail_publish_once = False
-        self.workflow_runs = [{"created_at": datetime.now(timezone.utc).isoformat(), "status": "completed", "conclusion": "success"}]
-
-    def upsert_issue(self, key, title, body, labels):
-        self.issues[key] = (title, body, labels)
-
-    def resolve_system_issue(self, key):
-        self.issues.pop(key, None)
-
-    def set_variable(self, name, value):
-        self.variables[name] = value
-
-    def variable(self, name, default=""):
-        return self.variables.get(name, default)
 
     def list_all(self, path):
         if path == "/releases":
@@ -54,10 +36,6 @@ class FakeGitHub:
 
     def api(self, path, method="GET", payload=None, binary=False):
         self.calls.append((path, method, payload))
-        if path == "/actions/workflows/upstream-check.yml":
-            return self.workflow
-        if path.endswith("/runs?per_page=1"):
-            return {"workflow_runs": self.workflow_runs}
         if path == "/releases/1/assets?per_page=100":
             return [{"id": i, "name": name, "size": len(data), "state": "uploaded"}
                     for i, (name, data) in enumerate(self.assets.items())]
@@ -132,8 +110,8 @@ class MonitorTests(unittest.TestCase):
         self.snapshot, _, _ = parse_package(*upstream_fixture())
         self.config = compatibility()
         self.config["supported"][0].update({k: self.snapshot[k] for k in ("version", "dll_sha256", "changelog_sha256")})
-        self.github = FakeGitHub()
-        self.env = patch.dict(os.environ, {"MAC_LAST_RUN_AT": datetime.now(timezone.utc).isoformat(), "MAINTENANCE_ENABLED": "true"})
+        self.github = Mock()
+        self.env = patch.dict(os.environ, {"MAINTENANCE_ENABLED": "true"})
         self.env.start()
         self.addCleanup(self.env.stop)
 
@@ -142,13 +120,13 @@ class MonitorTests(unittest.TestCase):
 
     def test_unchanged_creates_no_issue(self):
         self.assertFalse(run(self.github, fetch=self.fetch, config=self.config)["changed"])
-        self.assertEqual(self.github.issues, {})
+        self.assertEqual(self.github.mock_calls, [])
 
-    def test_new_version_deduplicates(self):
+    def test_new_version_reported_locally(self):
         self.snapshot, _, _ = parse_package(*upstream_fixture("1.7.1"))
         for _ in range(2):
             self.assertTrue(run(self.github, fetch=self.fetch, config=self.config)["changed"])
-        self.assertEqual(len(self.github.issues), 1)
+        self.assertEqual(self.github.mock_calls, [])
 
     def test_changed_dll_same_version_detected(self):
         changed, _, _ = parse_package(*upstream_fixture(dll=b"MZchanged"))
@@ -163,9 +141,7 @@ class MonitorTests(unittest.TestCase):
         with self.assertRaises(TimeoutError):
             run(self.github, config=self.config, fetch=lambda: (_ for _ in ()).throw(TimeoutError()))
         self.assertEqual(self.config, before)
-        self.assertIn("monitor-error", self.github.issues)
-        run(self.github, fetch=self.fetch, config=self.config)
-        self.assertNotIn("monitor-error", self.github.issues)
+        self.assertEqual(self.github.mock_calls, [])
 
     def test_untrusted_download_host_rejected(self):
         metadata, _ = upstream_fixture()
@@ -173,11 +149,13 @@ class MonitorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             fetch_upstream(lambda url: metadata)
 
-    def test_upstream_failure_still_reports_host_outage(self):
-        with patch.dict(os.environ, {"MAC_LAST_RUN_AT": ""}), self.assertRaises(TimeoutError):
-            run(self.github, config=self.config, fetch=lambda: (_ for _ in ()).throw(TimeoutError()))
-        self.assertIn("macmini-stale", self.github.issues)
-        self.assertIn("monitor-error", self.github.issues)
+    def test_offline_host_never_writes_to_github(self):
+        for timestamp in ("", "2000-01-01T00:00:00Z", "invalid"):
+            with self.subTest(timestamp=timestamp), patch.dict(os.environ, {"MAC_LAST_RUN_AT": timestamp}):
+                run(self.github, config=self.config, fetch=self.fetch)
+                with self.assertRaises(TimeoutError):
+                    run(self.github, config=self.config, fetch=Mock(side_effect=TimeoutError))
+                self.assertEqual(self.github.mock_calls, [])
 
     def test_invalid_archive_path_rejected(self):
         meta, data = upstream_fixture()
@@ -187,31 +165,10 @@ class MonitorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse_package(meta, stream.getvalue())
 
-    def test_heartbeat_boundary_and_invalid_values(self):
-        now = datetime(2026, 10, 8, tzinfo=timezone.utc)
-        self.assertFalse(heartbeat_stale((now - timedelta(hours=36)).isoformat(), now))
-        self.assertTrue(heartbeat_stale((now - timedelta(hours=37)).isoformat(), now))
-        self.assertTrue(heartbeat_stale((now + timedelta(hours=1)).isoformat(), now))
-        self.assertTrue(heartbeat_stale("not a date", now))
-
     def test_manual_pause_respected(self):
         self.config["status"] = "paused"
         self.assertEqual(run(self.github, config=self.config, fetch=self.fetch)["status"], "paused")
-        self.assertEqual(self.github.calls, [])
-
-    def test_watchdog_recovers_inactivity_only(self):
-        self.github.workflow["state"] = "disabled_inactivity"
-        self.assertEqual(watchdog(self.github)["status"], "ok")
-        self.assertTrue(any(path.endswith("/enable") for path, _, _ in self.github.calls))
-        self.github.calls.clear()
-        self.github.workflow["state"] = "disabled_manually"
-        self.assertEqual(watchdog(self.github)["status"], "monitor-paused-manually")
-        self.assertFalse(any(method != "GET" for _, method, _ in self.github.calls))
-
-    def test_watchdog_retries_failed_monitor(self):
-        self.github.workflow_runs[0]["conclusion"] = "failure"
-        self.assertEqual(watchdog(self.github)["status"], "ok")
-        self.assertTrue(any(path.endswith("/dispatches") for path, _, _ in self.github.calls))
+        self.assertEqual(self.github.mock_calls, [])
 
 
 class IssueTests(unittest.TestCase):

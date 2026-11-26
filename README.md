@@ -124,15 +124,11 @@ Für Build, statische API-Prüfung und Release-Paket gibt es außerdem ein Power
 
 Das Skript führt die Wartungs-Tests, die statische API-Prüfung und die Paketprüfung immer aus. Es schreibt die eigene DLL, ein Installations-ZIP, `SHA256SUMS.txt` und `BUILD-VERIFICATION.json` nach `dist/0.1.3/`. Der Prüfbericht hält Commit, private Referenz-Prüfsummen und die tatsächlich ausgeführten Prüfungen fest. Für ein veröffentlichbares Paket muss der Commit eingecheckt und der Arbeitsbaum unverändert sein.
 
-## Automatische Wartung
+## Manuelle Wartung
 
-GitHub prüft täglich um **09:17 Uhr, Europe/Berlin**, Thunderstore-Metadaten sowie den Changelog und die DLL im offiziellen Paket. Änderungen innerhalb derselben Mod-Version werden ebenfalls erkannt. Pro Änderung gibt es einen Wartungsvorgang; unveränderte Daten erzeugen kein weiteres Release.
+Der Eigentümer stößt Kompatibilitätsprüfungen und Änderungen bei Bedarf an. Fehler können über das Issue-Formular gemeldet werden. Ein ausgeschalteter Wartungsrechner löst keine Meldung aus.
 
-Der Wartungs-Chat auf dem MacMini prüft täglich um **09:47 Uhr** neue Versionen und neue Fehlerangaben. Eine Freigabe setzt die Untersuchung des tatsächlichen Upstream-Codes, einen Build mit privaten Spielreferenzen, die API- und Paketprüfung sowie erfolgreiche GitHub-Prüfungen für denselben Commit voraus. Der Veröffentlichungs-Workflow prüft danach Tag, Quellcode-Zuordnung und alle Release-Dateien erneut. Die originale NewtCraftHub-DLL und Spielbibliotheken werden nicht veröffentlicht.
-
-Ein manueller Spieltest ist keine Voraussetzung für künftige stabile Releases. Release-Notizen unterscheiden ausdrücklich zwischen statischer Prüfung und tatsächlich durchgeführten Spieltests. Sobald eine geprüfte NewtCraftHub-Version die Korrektur enthält, dokumentieren wir die Empfehlung zum Entfernen dieses Addons und beenden die automatische Anpassung.
-
-Einrichtung, erlaubte automatische Aktionen, Zugangsbeschränkungen, Ausfallüberwachung und das Pausieren sind in [MAINTENANCE.md](MAINTENANCE.md) beschrieben. Ein Abschalten der Wartung wird respektiert. Betrieb und Zeitpunkt hängen von GitHub, Strom, Netzwerk, laufender Codex-App, Anmeldung und Nutzungslimits ab.
+Für die Freigabe einer neuen NewtCraftHub-Version prüfen wir den Pflanz- und Abbaucode, bauen das Plugin gegen die privaten Spielreferenzen und prüfen API, Paket und CI für denselben Commit. Die Release-Notizen geben an, ob ein Funktionstest in Valheim stattgefunden hat. Der Ablauf ist in [MAINTENANCE.md](MAINTENANCE.md) beschrieben.
 
 ## Prüfungen und bekannte Grenzen
 

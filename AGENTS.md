@@ -3,11 +3,12 @@
 Kommuniziere immer auf Deutsch. Dieses Repository ist ein Zusatzplugin für NewtCraftHub,
 kein Ersatz für die Hauptmod. Die aktuelle Kompatibilität steht in maintenance/compatibility.json.
 
-## Dauerhaft erteilte Befugnisse
+## Manuelle Wartung
 
-Der Benutzer hat die tägliche Wartung auf dem MacMini ausdrücklich beauftragt.
-Für geprüfte Fixes und Kompatibilitätsanpassungen sind eigene Wartungsbranches,
-Gitmoji-Commits, Pushes, PRs, automatische Merges und stabile Releases erlaubt.
+Wartung beginnt nur auf ausdrücklichen Auftrag des Eigentümers. Der Auftrag bestimmt,
+welche Änderungen, PRs, Merges oder Releases durchgeführt werden. Die Erreichbarkeit
+des Wartungsrechners ist kein Anlass für ein Issue oder einen PR.
+
 Commit- und Tag-Nachrichten enthalten keine KI-, Codex-, Claude- oder Co-Author-Hinweise.
 Der KI-Hinweis bleibt am Ende der README erhalten.
 
@@ -25,7 +26,7 @@ Der KI-Hinweis bleibt am Ende der README erhalten.
   Die lokale gh-Anmeldung ist technisch nicht auf ein einzelnes Repository beschränkt;
   diese Wartung darf ihre weitergehenden Kontorechte nicht für andere Projekte nutzen.
 - Fremde PRs werden nur gelesen. Ihre Branches, Buildskripte und Tests laufen nicht auf dem MacMini.
-- Automatische Merges erfolgen ausschließlich über maintenance.macmini merge-pr.
+- Beauftragte Wartungs-Merges erfolgen ausschließlich über maintenance.macmini merge-pr.
   Änderungen an Workflows, Tests, Prüfwerkzeugen, Authentifizierung und diesen Regeln
   werden dem Benutzer als PR vorgelegt und nicht automatisch zusammengeführt.
 - Valheims ursprüngliche Schutzgebiets-, Abbau-, Netzwerk-, Entfernungs- und
